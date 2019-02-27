@@ -49,11 +49,19 @@
         "usuario" : usuario,
         "password" : password
       };
-      $.post("includes/_funciones.php", obj, function(){
-
+        
+      $.post("includes/_funciones.php", obj)
+      .done(()=>{              
+        console.log("Conexión correcta"); 
+      })
+      .fail(()=>{
+        console.log("Error en conexión");
+      })
+      .then((data)=>{
+        if(data==1){
+          setTimeout(function(){ location.href='./dashboard'; }, 2000);         
+        }
       });
-        // Mostrar mensaje de error
-        // Redireccionar a usuarios.php
     });
 
 
