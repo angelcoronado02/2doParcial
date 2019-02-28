@@ -8,6 +8,6 @@ $db = new Medoo([
     'database_name' => 'softengi_cuda',
     'server' => '127.0.0.1',
     'username' => 'root',
-    'password' => 'root'
+    'password' => ''
 ]);
 ?>

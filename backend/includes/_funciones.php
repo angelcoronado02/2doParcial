@@ -3,7 +3,7 @@ require_once '_db.php';
 if(isset($_POST["accion"])){
 	switch ($_POST["accion"]) {
 		case 'login':
-		return login($db);
+		login($_POST["usuario"], $_POST["password"]);
 		break;
 		
 		case 'eliminar_usuarios':
@@ -26,30 +26,29 @@ function mostrar_usuarios(){
 	$consultar = $db->select("usuarios","*",["status_usr" => 1]);
 	echo json_encode($consultar);
 }
-
-function login($db){	
-	$user=$_POST["usuario"];
-	$password=$_POST["password"];		
-
-	if(!$db->select("usuarios","*",["correo_usr" => $user])){
-		echo 2;
-		return false;
-	}else if(
-			!$db->select("usuarios","*",[
-				"AND" => [
-					"password_usr" => $password,
-					"correo_usr" => $user,		
-					"status_usr"=>1
-				]
-			])
-		){
-		echo 0;
-		return false;
-	}				
-	echo 1;		
-	return;
+function login($usuario, $password){
+    global $db;
+    $conpassword=$db->select("usuarios","*",["password_usr"=>$password]);#consulta para la contraseña
+    $conuser=$db->select("usuarios","*",["correo_usr"=>$usuario]);#consulta para usuario
+    
+      if ( filter_var($usuario,FILTER_VALIDATE_EMAIL) ){#funcion para validar el email sanear
+           if(!$conuser){
+               echo 2;
+               return false;
+           }elseif(!$conpassword){
+               echo 0;
+               return false;
+           }else{
+               echo 1;
+               return;
+           }
+        } else {
+            echo 3;
+          return false;
+        }
+    
+    
 }
-
 function eliminar_usuarios($usuario){
 	global $db;
 	$eliminar_usuarios = $db->delete("usuarios",["id_usr" => $usuario]);

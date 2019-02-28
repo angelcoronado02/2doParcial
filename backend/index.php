@@ -39,27 +39,30 @@
  
       let usuario = $("#inputEmail").val();
       let password = $("#inputPassword").val();
-        alert(usuario);
       if(usuario == "" || password == ""){
         alert("Los campos de Correo y Password son Requeridos");
-        return false;
       }
       let obj = {
         "accion" : "login",
         "usuario" : usuario,
         "password" : password
       };
-        
-      $.post("includes/_funciones.php", obj)
-      .done(()=>{              
-        console.log("Conexión correcta"); 
-      })
-      .fail(()=>{
-        console.log("Error en conexión");
-      })
+     $.post("includes/_funciones.php", obj, function(data){})
       .then((data)=>{
-        if(data==1){
-          setTimeout(function(){ location.href='./dashboard'; }, 2000);         
+        if(data!=1){
+            if(data==3){
+                alert("Email invalido");
+            }
+            else if(data==2){
+                alert("Usuario invalido");
+            }
+           else if(data==0){
+                alert("contraseña invalida");
+            }
+        }else{
+            
+             setTimeout(function(){ location.href='./usuarios'; }, 3000);
+            
         }
       });
     });

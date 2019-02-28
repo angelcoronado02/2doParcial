@@ -1,6 +1,6 @@
 <?php 
 require_once '../includes/_db.php';
-require_once '../includes/_funciones.php';
+require_once '../includes/_funcionessvc.php';
 ?>
 <!doctype html>
 <html lang="en">
@@ -33,17 +33,17 @@ require_once '../includes/_funciones.php';
             <li class="nav-item">
               <a class="nav-link" href="#">
                 <span data-feather="home"></span>
-                Dashboard 
+                Dashboard
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="../usuarios/">
+              <a class="nav-link" href="../usuarios/">
                 <span data-feather="file"></span>
                 Usuarios<span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../servicios/">
+              <a class="nav-link active" href="../servicios/">
                 <span data-feather="file"></span>
                 Servicios<span class="sr-only">(current)</span>
               </a>
@@ -54,36 +54,35 @@ require_once '../includes/_funciones.php';
                 Portafolio<span class="sr-only">(current)</span>
               </a>
             </li>
-
           </ul>
         </div>
       </nav>
 
       <main id="main" role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-        <h2>Usuarios
+        <h2>Servicios
           <button type="button" id="btn_nuevo" class="btn btn-outline-primary">Nuevo</button>
         </h2>
         <div class="table-responsive view" id="mostrar_datos">
           <table class="table table-striped table-sm" id="table_datos">
             <thead>
               <tr>
-                <th>Usuario</th>
-                <th>Teléfono</th>
-                <th>Acciones</th>
+                <th>Servicios</th>
+                <th>Descripcion</th>
+                <th>Accion</th>
               </tr>
             </thead>
             <tbody>
               <?php 
-              $usuarios = $db->select("usuarios","*",["status_usr" => 1]);
-              foreach ($usuarios as $usuario => $usr) {
+              $servicios = $db->select("servicios","*",["status_svc" => 1]);
+              foreach ($servicios as $servicios => $usr) {
                 ?>
                 <tr>
-                  <td><?php echo $usr["nombre_usr"]; ?></td>
-                  <td><?php echo $usr["telefono_usr"]; ?></td>
+                  <td><?php echo $usr["nombre_svc"]; ?></td>
+                  <td><?php echo $usr["descripcion_svc"]; ?></td>
                   <td>
-                    <a href="#" class=""data-id="<?php echo $usr["id_usr"]; ?>">Editar</a>
-                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id_usr"]; ?>">Eliminar</a></td>
+                    <a href="#" class=""data-id="<?php echo $usr["id_svc"]; ?>">Editar</a>
+                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id_svc"]; ?>">Eliminar</a></td>
                   </tr>
                   <?php
                 }
@@ -100,46 +99,12 @@ require_once '../includes/_funciones.php';
                     <input type="text" class="form-control" name="nombre" id="nombre">
                   </div>
                   <div class="form-group">
-                    <label for="correo">Correo Eléctronico</label>
-                    <input type="email" class="form-control" name="correo" id="correo">
-                  </div>
-                  <div class="form-group">
-                    <label for="trabajo">Trabajo</label>
-                    <input type="text" class="form-control" name="trabajo" id="trabajo">
-                  </div>
-                  <div class="form-group">
                     <label for="descripcion">Descripción</label>
                     <input type="text" class="form-control" name="descripcion" id="descripcion">
                   </div>
                   <div class="form-group">
                     <label for="foto">Foto</label>
                     <input type="text" class="form-control" name="foto" id="foto">
-                  </div>
-                  <div class="form-group">
-                    <label for="tipo">Tipo</label>
-                    <input type="text" class="form-control" name="tipo" id="tipo">
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" class="form-control" name="password" id="password">
-                  </div>
-                  <div class="form-group">
-                    <label for="twitter">Twitter</label>
-                    <input type="text" class="form-control" name="twitter" id="twitter">
-                  </div>
-                  <div class="form-group">
-                    <label for="linkedin">Linkedin</label>
-                    <input type="text" class="form-control" name="linkedin" id="linkedin">
-                  </div>
-                  <div class="form-group">
-                    <label for="facebook">Facebook</label>
-                    <input type="text" class="form-control" name="facebook" id="facebook">
-                  </div>
-                  <div class="form-group">
-                    <label for="telefono">Teléfono</label>
-                    <input type="tel" class="form-control" name="telefono" id="telefono">
                   </div>
                 </div>
               </div>
@@ -178,29 +143,13 @@ require_once '../includes/_funciones.php';
       $("#registrar").click(function(){
           
           let nombre=$("#nombre").val();
-        let correo=$("#correo").val();
-        let trabajo=$("#trabajo").val();
         let descripcion=$("#descripcion").val();
         let foto=$("#foto").val();
-        let tipo=$("#tipo").val();
-        let password=$("#password").val();
-        let twitter=$("#twitter").val();
-        let linkedin=$("#linkedin").val();
-        let facebook=$("#facebook").val();
-        let telefono=$("#telefono").val();
         let obj = {
-          "accion" : "insertar_usuarios",
+          "accion" : "insertar_servicios",
             "nombre" : nombre,
-            "correo" : correo,
-            "trabajo" : trabajo,
             "descripcion" : descripcion,
-            "foto" : foto,
-            "tipo" : tipo,
-            "password" : password,
-            "twitter" : twitter,
-            "linkedin" : linkedin,
-            "facebook" : facebook,
-            "telefono" : telefono
+            "foto" : foto
         };
           
         $("#frm_datos").find("input").keyup(function(){
@@ -217,12 +166,12 @@ require_once '../includes/_funciones.php';
           
         });
           
-          if(nombre.length==0 || correo.length==0 || trabajo.length==0 || descripcion.length==0 || foto.length==0 || tipo.length==0 || password.length==0 || twitter.length==0 || linkedin.length==0 ||facebook.length==0 || telefono.length==0){
+          if(nombre.length==0 || descripcion.length==0 || foto.length==0){
               alert("Por favor no dejes campos vacios");
               
           }else{
-              $.post("../includes/_funciones.php", obj, function(data){
-              mostrar_usuarios();
+              $.post("../includes/_funcionessvc.php", obj, function(data){
+              mostrar_servicios();
               });
               alert("Registro exitoso");
               $("#frm_datos")[0].reset();
@@ -235,29 +184,29 @@ require_once '../includes/_funciones.php';
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {
-          "accion" : "eliminar_usuarios",
-          "usuario" : id
+          "accion" : "eliminar_servicios",
+          "servicios" : id
         }
-        $.post("../includes/_funciones.php",obj, function(data){
-          mostrar_usuarios();
+        $.post("../includes/_funcionessvc.php",obj, function(data){
+          mostrar_servicios();
         });
       });
-      function mostrar_usuarios(){
+      function mostrar_servicios(){
         let obj = {
-          "accion" : "mostrar_usuarios"
+          "accion" : "mostrar_servicios"
         }
         
-        $.post("../includes/_funciones.php",obj, function(data){
+        $.post("../includes/_funcionessvc.php",obj, function(data){
           let template = ``; 
           $.each(data, function(e,elem){
             template += `
             <tr>
-            <td>${elem.nombre_usr}</td>
-            <td>${elem.telefono_usr}</td>
+            <td>${elem.nombre_svc}</td>
+            <td>${elem.descripcion_svc}</td>
             <td>
-            <a href="#" class=""data-id="${elem.id_usr}">Editar</a>
-            <a href="#" class="eliminar_registro" data-id="${elem.id_usr}">Eliminar</a></td>
-            </tr>ﬂﬂﬂ
+            <a href="#" class=""data-id="${elem.id_svc}">Editar</a>
+            <a href="#" class="eliminar_registro" data-id="${elem.id_svc}">Eliminar</a></td>
+            </tr>
             `;
           });
           $("#table_datos tbody").html(template);
