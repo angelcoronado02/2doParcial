@@ -59,10 +59,8 @@
            else if(data==0){
                 alert("contraseña invalida");
             }
-        }else{
-            
-             setTimeout(function(){ location.href='./usuarios'; }, 3000);
-            
+        }else{            
+             setTimeout(function(){ location.href='./usuarios'; }, 3000);            
         }
       });
     });

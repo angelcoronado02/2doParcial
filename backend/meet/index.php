@@ -1,6 +1,6 @@
-<?php 
+<?php
 require_once '../includes/_db.php';
-require_once '../includes/_funcionessvc.php';
+require_once '../includes/_meet.php';
 ?>
 <!doctype html>
 <html lang="en">
@@ -43,60 +43,47 @@ require_once '../includes/_funcionessvc.php';
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../servicios/">
+              <a class="nav-link active" href="../servicios/">
                 <span data-feather="file"></span>
                 Servicios<span class="sr-only">(current)</span>
               </a>
             </li>
-              <li class="nav-item">
-              <a class="nav-link" href="../meet/">
-                <span data-feather="file"></span>
-                Meet<span class="sr-only">(current)</span>
-              </a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="../skills/">
+              <a class="nav-link active" href="../crew/">
                 <span data-feather="file"></span>
-                Skills<span class="sr-only">(current)</span>
+                Servicios<span class="sr-only">(current)</span>
               </a>
             </li>
-             <li class="nav-item">
-              <a class="nav-link active" href="../portafolio/">
-                <span data-feather="file"></span>
-                Portafolio<span class="sr-only">(current)</span>
-              </a>
-            </li>
+
           </ul>
         </div>
       </nav>
 
       <main id="main" role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
-        <h2>Portafolio
+        <h2>Crew
           <button type="button" id="btn_nuevo" class="btn btn-outline-primary">Nuevo</button>
         </h2>
         <div class="table-responsive view" id="mostrar_datos">
           <table class="table table-striped table-sm" id="table_datos">
             <thead>
               <tr>
-                <th>Id</th>
-                <th>Nombre</th>
+                <th>Crew</th>
                 <th>Descripcion</th>
                 <th>Accion</th>
               </tr>
             </thead>
             <tbody>
-              <?php 
-              $portafolio = $db->select("portafolio","*",["status" => 1]);
-              foreach ($portafolio as $portafolio => $usr) {
+              <?php
+              $crew = $db->select("crew","*",["status_cr" => 1]);
+              foreach ($crew as $crew => $usr) {
                 ?>
                 <tr>
-                  <td><?php echo $usr["Id"]; ?></td>
-                  <td><?php echo $usr["nombre"]; ?></td>
-                  <td><?php echo $usr["descripcion"]; ?></td>
+                  <td><?php echo $usr["nombre_cr"]; ?></td>
+                  <td><?php echo $usr["descripcion_cr"]; ?></td>
                   <td>
-                    <a href="#" class="editar_registro"data-id="<?php echo $usr["Id"]; ?>">Editar</a>
-                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["Id"]; ?>">Eliminar</a></td>
+                    <a href="#" class=""data-id="<?php echo $usr["id_cr"]; ?>">Editar</a>
+                    <a href="#" class="eliminar_registro" data-id="<?php echo $usr["id_cr"]; ?>">Eliminar</a></td>
                   </tr>
                   <?php
                 }
@@ -126,7 +113,7 @@ require_once '../includes/_funcionessvc.php';
                 <div class="col">
                   <button type="button" class="btn btn-outline-danger cancelar">Cancelar</button>
                   <button type="button" class="btn btn-outline-success" id="registrar">Guardar</button>
-                  
+
                 </div>
               </div>
             </form>
@@ -136,7 +123,7 @@ require_once '../includes/_funcionessvc.php';
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script>
-                
+
       change_view();
       function change_view(vista = "mostrar_datos"){
         $("#main").find(".view").each(function(){
@@ -154,41 +141,21 @@ require_once '../includes/_funcionessvc.php';
         $("#frm_datos")[0].reset();
         change_view();
       });
-        
-        $("#main").on("click",".editar_registro", function(e){
-        e.preventDefault();
-        change_view("formulario_datos");
-        let id=$(this).data("id")
-        let obj={
-            "accion" : "consulta_individual",
-            "registro" : $(this).data("id")
-        }
-         $.post("../includes/_funcionesptfo.php", obj, function(data){
-             $("#nombre").val(data.nombre);
-             $("#descripcion").val(data.descripcion);           
-             $("#foto").val(data.imagen)
-         }, "JSON");
-        
-        $("#registrar").text("Actualizar").data("edicion", 1).data("registro", id);
-    });
-        
-        $("#frm_datos").find("input").keyup(function(){
-            $(this).removeClass("error");
-        });
-        
       $("#registrar").click(function(){
-          
-          let nombre=$("#nombre").val();
+
+        let nombre=$("#nombre").val();
         let descripcion=$("#descripcion").val();
         let foto=$("#foto").val();
         let obj = {
-          "accion" : "insertar_portafolio",
-            "nombre" : nombre,
-            "descripcion" : descripcion,
-            "foto" : foto
+          "accion" : "insertar_crew",
+          "nombre" : nombre,
+          "descripcion" : descripcion,
+          "foto" : foto
         };
-          
-      
+
+        $("#frm_datos").find("input").keyup(function(){
+          $(this).removeClass("error");
+        });
         $("#frm_datos").find("input").each(function(){
           $(this).removeClass("error");
           if($(this).val() == ""){
@@ -197,58 +164,52 @@ require_once '../includes/_funcionessvc.php';
           }else{
             obj[$(this).prop("name")] = $(this).val();
           }
-          
+
         });
-          if($(this).data("edicion")==1){
-                obj["accion"]="editar_portafolio";
-                obj["registro"]=$(this).data("registro");
-              $(this).text("Guardar").removeData("edicion").removeData("registro");
-             }
-          
+
           if(nombre.length==0 || descripcion.length==0 || foto.length==0){
               alert("Por favor no dejes campos vacios");
-              
+
           }else{
-              $.post("../includes/_funcionesptfo.php", obj, function(data){             
-               alert(data);
-                  change_view(); 
-              mostrar_portafolio();
-                   $("#frm_datos")[0].reset(); 
+              $.post("../includes/_crew.php", obj, function(data){
+              mostrar_crew();
               });
-              
-          }          
+              alert("Registro exitoso");
+              $("#frm_datos")[0].reset();
+          }
+
       });
-      $("#main").on("click",".eliminar_registro",function(e){
+      $("#main").find(".eliminar_registro").click(function(e){
         e.preventDefault();
         let id = $(this).data('id');
         let obj = {
-          "accion" : "eliminar_portafolio",
+          "accion" : "eliminar_crew",
           "servicios" : id
         }
-        $.post("../includes/_funcionesptfo.php",obj, function(data){
-          mostrar_portafolio();
+        $.post("../includes/_crew.php",obj, function(data){
+          mostrar_crew();
         });
       });
-      function mostrar_portafolio(){
+      function mostrar_crew(){
         let obj = {
-          "accion" : "mostrar_portafolio"
+          "accion" : "mostrar_crew"
         }
-        
-        $.post("../includes/_funcionesptfo.php",obj, function(data){
-          let template = ``; 
+
+        $.post("../includes/_crew.php",obj, function(data){
+          let template = ``;
           $.each(data, function(e,elem){
             template += `
             <tr>
-            <td>${elem.nombre}</td>
-            <td>${elem.descripcion}</td>
+            <td>${elem.nombre_crew}</td>
+            <td>${elem.descripcion_crew}</td>
             <td>
-            <a href="#" class="editar_registro"data-id="${elem.Id}">Editar</a>
-            <a href="#" class="eliminar_registro" data-id="${elem.Id}">Eliminar</a></td>
+            <a href="#" class=""data-id="${elem.id_crew}">Editar</a>
+            <a href="#" class="eliminar_registro" data-id="${elem.id_crew}">Eliminar</a></td>
             </tr>
             `;
           });
           $("#table_datos tbody").html(template);
-        },"JSON");      
+        },"JSON");
       }
     </script>
     </html>
